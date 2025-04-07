@@ -18,7 +18,8 @@ class RecipeViewModel {
     var searchScope: searchScope = .all
     let apiURL = "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json"
     let pageLength = 10
-    
+    var currentPage = 1
+    var isLoading = false
     // Cache Manager Properties
     private let fileManager = FileManager.default
     private var cacheDirectory: URL?
@@ -45,46 +46,64 @@ class RecipeViewModel {
     
     // MARK: - Recipe Fetching
     
-    func cuisineTypes() -> [String] {
-        let cuisines = Set(recipes.map { $0.cuisine })
-        return Array(cuisines).sorted()
-    }
-    
-    func filteredRecipes() -> [Recipe] {
+    /// Returns the full list of recipes filtered by searchText and searchScope.
+    private var filteredRecipes: [Recipe] {
+        // (Logic unchanged from previous version)
         if searchText.isEmpty {
             return recipes
         } else {
+            let lowercasedSearchText = searchText.lowercased()
             switch searchScope {
             case .all:
-                return recipes.filter { $0.name.lowercased().contains(searchText.lowercased()) || $0.cuisine.lowercased().contains(searchText.lowercased()) }
+                return recipes.filter { $0.name.lowercased().contains(lowercasedSearchText) || $0.cuisine.lowercased().contains(lowercasedSearchText) }
             case .cuisine:
-                return recipes.filter { $0.cuisine.lowercased().contains(searchText.lowercased()) }
+                return recipes.filter { $0.cuisine.lowercased().contains(lowercasedSearchText) }
             case .name:
-                return recipes.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+                return recipes.filter { $0.name.lowercased().contains(lowercasedSearchText) }
             }
         }
     }
     
-    /// Get paginated recipes
-    /// - Parameter page: page number to fetch (starts at 1)
-    /// - Returns: Array of recipes for the requested page
-    func fetchRecipes(page: Int) -> [Recipe] {
-        // Ensure we have a valid page
-        guard page > 0 else {
-            return []
+    /// Returns the calculated total number of pages based on the filtered results.
+    var totalFilteredPages: Int {
+        let totalItems = filteredRecipes.count
+        return (totalItems + pageLength - 1) / pageLength
+    }
+    
+    /// Returns the recipes for 1 to current page
+    var displayedRecipes: [Recipe] {
+        let filtered = filteredRecipes
+        let itemsToDisplayCount = currentPage * pageLength
+        let endIndex = min(itemsToDisplayCount, filtered.count)
+        
+        guard endIndex >= 0 else { return [] }
+        
+        return Array(filtered[0..<endIndex])
+    }
+    
+    // MARK: - Pagination Methods
+    
+    /// Resets the current page to 1 and clears loading state.
+    func resetPage() {
+        currentPage = 1
+        isLoading = false
+    }
+    
+    /// Increments the current page if not already loading and if more pages exist.
+    func loadNextPageIfNeeded() {
+        guard !isLoading, currentPage < totalFilteredPages else {
+            return
         }
         
-        // Calculate start and end indices
-        let startIndex = (page - 1) * pageLength
-        let endIndex = min(startIndex + pageLength, recipes.count)
+        self.isLoading = true
         
-        // Ensure start index is valid
-        guard startIndex < recipes.count else {
-            return []
-        }
+        self.currentPage += 1
+        self.isLoading = false
         
-        // Return the slice of recipes for this page
-        return Array(recipes[startIndex..<endIndex])
+    }
+    func cuisineTypes() -> [String] {
+        let cuisines = Set(recipes.map { $0.cuisine })
+        return Array(cuisines).sorted()
     }
     
     /// Fetch all recipes from the API

@@ -23,7 +23,7 @@ struct RecipeListView: View {
                     .navigationTitle("Recipes")
                 } else {
                     LazyVStack(alignment: .leading, spacing: 8) {
-                        ForEach(recipeVM.filteredRecipes()) { recipe in
+                        ForEach(recipeVM.displayedRecipes) { recipe in
                             if #available(iOS 18.0, *) {
                                 NavigationLink {
                                     RecipeDetailView(recipe: recipe)
@@ -31,6 +31,11 @@ struct RecipeListView: View {
                                 } label: {
                                     RecipeRowView(recipe: recipe)
                                         .matchedTransitionSource(id: "zoomTransition\(recipe.id)", in: namespace)
+                                        .onAppear {
+                                            if recipe.id == recipeVM.displayedRecipes.last?.id {
+                                                recipeVM.loadNextPageIfNeeded()
+                                            }
+                                        }
                                 }
                                 .foregroundStyle(.primary)
                             } else {
@@ -41,6 +46,9 @@ struct RecipeListView: View {
                                 }
                                 .foregroundStyle(.primary)
                             }
+                        }
+                        if recipeVM.isLoading {
+                            ProgressView()
                         }
                     }
                     .padding()
