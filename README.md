@@ -8,7 +8,7 @@ This iOS application displays recipes fetched from a provided API endpoint. The 
 
 * **Recipe List & Detail:**
 
-<img src="https://github.com/user-attachments/assets/f118b92d-aa6e-473a-bc56-1eaabf32465e" alt="Recipe List" width="200"> <img src="https://github.com/user-attachments/assets/17de924b-7583-4721-b14b-bc7cf7418b4d" alt="Recipe Detail" width="200">
+<img src="https://github.com/user-attachments/assets/f118b92d-aa6e-473a-bc56-1eaabf32465e" alt="Recipe List" width="200"> <img src="https://github.com/user-attachments/assets/b3175d48-0195-42b3-bd09-ca095ace7c45" alt="Recipe Detail" width="200">
 
 * **Search & Filtering:** Includes search functionality with scopes (All, Cuisine, Name).
 <img src="https://github.com/user-attachments/assets/9dff0be8-f378-4cb6-a1c0-8f1aca541c37" alt="Search Scopes and Searchable" width="200">
@@ -17,7 +17,10 @@ This iOS application displays recipes fetched from a provided API endpoint. The 
 <img src="https://github.com/user-attachments/assets/d6ed604c-146f-4589-8121-ae4b7e5c45a7" alt="Pull to Refresh" width="200">
 
 * **Navigation Transition:** Uses a zoom transition effect when navigating to the detail view (requires iOS 18+).
-<img src="https://github.com/user-attachments/assets/1e9b393f-6a96-4490-9c71-65a1cd9cf198" alt="Navigation Zoom Transition (iOS 18+)" width="200">
+<img src="https://github.com/user-attachments/assets/fcec4458-f762-4ec6-bdea-94ca4b7f1422" alt="Navigation Zoom Transition (iOS 18+)" width="200">
+
+* **Links to Source and Video:** Uses a zoom transition effect when navigating to the detail view (requires iOS 18+).
+<img src="https://github.com/user-attachments/assets/f9c769be-9ff3-44c2-bb5e-6db9b1cb667d" alt="Links to Source and Youtube Video" width="200">
 
 * **Infinite Scrolling:** Automatically loads more recipes as the user scrolls to the bottom of the list using pagination.
 
