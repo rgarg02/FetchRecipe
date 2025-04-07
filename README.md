@@ -43,16 +43,14 @@ This iOS application displays recipes fetched from a provided API endpoint. The 
 
 ### Trade-offs and Decisions
 
-* **Cache Eviction:** The current cache eviction strategy is basic: it completely clears the entire cache directory if either the total size or item count limit is exceeded. A more sophisticated cache eviction policy, like LRU could have been used for better performance. However I thought it would be beyond the scope of this exercise. If I were to implement LRU, I could have done so by using the fileCreationDate property from the fileManager.
+* **Cache Eviction:** The current cache eviction strategy is basic: it completely clears the entire cache directory if either the total size or item count limit is exceeded. A more sophisticated cache eviction policy, like Last Recently Used (LRU) could have been used for better performance. However I thought it would be beyond the scope of this exercise. If I were to implement LRU, I could have done so by using the fileCreationDate property from the fileManager.
 * **Error Handling:** Error handling primarily relies on displaying alerts to the user (`showAlert` property in ViewModels/Views). More specific UI feedback (e.g., inline error messages, placeholder images with error icons in the list view for individual image load failures) could be implemented but was kept simple. The app handles the malformed JSON data by catching the decoding error and presenting an alert popup to the user. The empty JSON data is handled by showing a ContentUnavailableView.
 * **Image Loading in Detail View:** `AsyncImage` is used in `RecipeDetailView` for simplicity. While it uses the shared `URLSession` cache by default (which the requirements discouraged for the *custom* cache implementation), integrating the custom cache here would add complexity. The requirement focused on custom caching for *repeated* requests (like list thumbnails), which is implemented.
-* **Pagination:** Since the API does not allow for pagination, it is handled by the view model by slicing the array stored in the memory. This simulates the pagination behavior however not necessary since all the recipes are loading in the memory anyways. 
+* **Pagination:** Since the API does not allow for pagination, it is handled by the view model by slicing the array stored in the memory. This simulates the pagination behavior however not necessary since all the recipes are loading in the memory anyways.
+  
 ### Weakest Part of the Project
 
 * **Cache Eviction:** Currently the cache is entirely emptied when it reaches the size or count limit. This could be improved significantly by implementing LRU policy.
-* **UI Error Handling:** While network and caching errors are caught and can be displayed via alerts, the user experience for specific errors (like a single image failing to load in the list) could be more granular and informative within the UI itself rather than relying solely on modal alerts.
-* **Cache Eviction Strategy:** As mentioned in trade-offs, the current "clear all" cache eviction is rudimentary. A production app would benefit from a more nuanced strategy like LRU to maximize cache effectiveness.
-* **Accessibility:** While basic SwiftUI elements provide some level of accessibility, dedicated testing and implementation of accessibility features (e.g., dynamic type support, voice-over labels, element grouping) were not a primary focus area.
 
 ### Additional Information
 
