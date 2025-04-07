@@ -25,7 +25,8 @@ This iOS application displays recipes fetched from a provided API endpoint. The 
 * **Infinite Scrolling:** Automatically loads more recipes as the user scrolls to the bottom of the list using pagination.
 
 * **Custom Image Caching:** Efficiently loads and caches images to disk.
-  
+
+* **DocC Documentation:** Includes DocC documentation for functions, providing better understanding of the code.   
 ### Focus Areas
 
 1.  **Swift Concurrency (`async/await`):** Ensuring all network calls (fetching recipes, fetching images) and related asynchronous tasks were implemented using `async/await` for modern, efficient concurrency handling while maintaining a smooth experience for the user.
