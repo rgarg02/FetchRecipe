@@ -49,15 +49,21 @@ struct RecipeDetailView: View {
                     .foregroundColor(.secondary)
                 
                 if let sourceUrl = recipe.sourceUrl, let url = URL(string: sourceUrl) {
-                    Link("Source", destination: url)
+                    Link("View detailed Instructions", destination: url)
                         .padding(.top, 8)
                         .foregroundColor(.blue)
                 }
                 
                 if let youtubeUrl = recipe.youtubeUrl, let url = URL(string: youtubeUrl) {
-                    Link("Watch on YouTube", destination: url)
-                        .padding(.top, 8)
-                        .foregroundColor(.blue)
+                    HStack{
+                        Link("Watch on YouTube", destination: url)
+                            .foregroundColor(.blue)
+                        Image("youtube_logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                    }
+                    .padding(.top, 8)
                 }
             }
             .padding()
