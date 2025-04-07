@@ -14,6 +14,8 @@ class RecipeViewModel {
     var recipes: [Recipe] = []
     var showAlert = false
     var error: NetworkError = .invalidResponse
+    var searchText = ""
+    var searchScope: searchScope = .all
     let apiURL = "https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json"
     let pageLength = 10
     
@@ -42,6 +44,26 @@ class RecipeViewModel {
     }
     
     // MARK: - Recipe Fetching
+    
+    func cuisineTypes() -> [String] {
+        let cuisines = Set(recipes.map { $0.cuisine })
+        return Array(cuisines).sorted()
+    }
+    
+    func filteredRecipes() -> [Recipe] {
+        if searchText.isEmpty {
+            return recipes
+        } else {
+            switch searchScope {
+            case .all:
+                return recipes.filter { $0.name.lowercased().contains(searchText.lowercased()) || $0.cuisine.lowercased().contains(searchText.lowercased()) }
+            case .cuisine:
+                return recipes.filter { $0.cuisine.lowercased().contains(searchText.lowercased()) }
+            case .name:
+                return recipes.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            }
+        }
+    }
     
     /// Get paginated recipes
     /// - Parameter page: page number to fetch (starts at 1)
@@ -84,6 +106,7 @@ class RecipeViewModel {
             let recipeList = try decoder.decode(RecipeList.self, from: data)
             // Updating the recipes property on the main actor
             await MainActor.run {
+                self.recipes = []
                 self.recipes = recipeList.recipes
             }
         } catch {
@@ -153,7 +176,7 @@ class RecipeViewModel {
     
     
     /// Clears the image cache directory, resets counters, and ensures directory exists.
-    private func clearImageCacheAndInstantiate() {
+    func clearImageCacheAndInstantiate() {
         guard let cachesUrl = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             print("Error: Could not find caches directory to clear cache.")
             return
@@ -212,7 +235,7 @@ class RecipeViewModel {
     ///   - data: The image data to save.
     ///   - key: The URL string used as the cache key.
     /// - Throws: A CacheError if saving fails.
-    private func saveToCache(data: Data, forKey key: String) throws {
+    func saveToCache(data: Data, forKey key: String) throws {
         guard let filePath = cacheFilePath(forKey: key) else {
             throw CacheError.directoryNotFound
         }
@@ -236,7 +259,7 @@ class RecipeViewModel {
     /// Loads data from the disk cache.
     /// - Parameter key: The URL string used as the cache key.
     /// - Returns: The cached data, or nil if not found or an error occurs.
-    private func loadFromCache(forKey key: String) -> Data? {
+    func loadFromCache(forKey key: String) -> Data? {
         guard let filePath = cacheFilePath(forKey: key) else {
             return nil
         }
